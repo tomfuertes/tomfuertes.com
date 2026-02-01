@@ -49,13 +49,25 @@ const defaultLayout = (title: string, content: string) => `<!DOCTYPE html>
               <p>
                 Tom Fuertes<br />
                 <strike>Poker Player</strike> Front End Developer<br />
-                tomfuertes@gmail.com
+                <span id="em"></span><script>(function(){var a=atob('dG9tZnVlcnRlc0BnbWFpbC5jb20='),b=atob('dG9tQHRvbWZ1ZXJ0ZXMuY29t'),c=atob('dG9tQG5vdGFtYm91cmluZS5jb20=');document.getElementById('em').innerHTML=[a,b,c].join('<br>')})()</script>
               </p>
             </div>
             <div class="contact">
               <p>
                 <a href="https://github.com/tomfuertes">github.com/tomfuertes</a><br />
+                <a href="https://linkedin.com/in/tomfuertes">linkedin.com/in/tomfuertes</a><br />
                 <a href="https://twitter.com/thisbetom">twitter.com/thisbetom</a><br />
+              </p>
+            </div>
+            <div class="contact" style="flex-basis:100%;margin-top:1em;">
+              <p><strong>Want to talk? Ask me about:</strong><br />
+                My desk setup (the mic especially)<br />
+                Airgapping AI workflows from personal data<br />
+                Poker → CRO → the product-dev merge<br />
+                Fuji photography and capturing moments of transition
+              </p>
+              <p>
+                <strong>Looking to partner?</strong> I consult at <a href="https://notambourine.com">notambourine.com</a> — connect on <a href="https://linkedin.com/in/tomfuertes">LinkedIn</a>.
               </p>
             </div>
           </div>

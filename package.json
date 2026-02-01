@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "build": "bun run build.ts",
-    "dev": "bun run build.ts && bunx serve _site",
+    "dev": "bun --watch run build.ts",
+    "serve": "bunx serve _site",
     "preview": "bun run build && bunx wrangler dev",
     "deploy": "bun run build && bunx wrangler deploy"
   },
