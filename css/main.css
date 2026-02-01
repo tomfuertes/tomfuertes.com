@@ -141,11 +141,29 @@ a:visited { color: var(--link-visited); }
 }
 
 .footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-top: 4em;
   padding-top: 1em;
   border-top: 1px solid var(--border);
   color: var(--text-tertiary);
   font-size: 0.85em;
+}
+
+.footer .social {
+  display: flex;
+  gap: 1em;
+}
+
+.footer .social a {
+  color: var(--text-tertiary);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.footer .social a:hover {
+  color: var(--text-primary);
 }
 
 /*****************************************************************************/

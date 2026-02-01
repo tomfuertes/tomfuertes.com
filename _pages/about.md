@@ -2,17 +2,16 @@
 title: About
 ---
 
-Fractional CTO. Former poker player turned front-end developer turned technical leader.
+Fractional CTO. UIGEA fallout → winding path here.
 
-I run [NoTambourine](https://notambourine.com), where I provide fractional CTO services to growth-stage companies. Past clients include Uber, DoorDash, Casper, Patagonia, Adidas, Ring, and Zendesk.
+I run [NoTambourine](https://notambourine.com) — cultural change, unblocking orgs, shipping it. I've landed code to prod at Uber, DoorDash, Casper, Patagonia, Adidas, Ring, Zendesk, and others.
 
 Before that: conversion rate optimization, A/B testing infrastructure, and the messy middle where product meets engineering.
 
 ## Ask me about
 
-- My desk setup (the mic especially)
+- Voice-driven dev workflows (this mic setup)
 - Airgapping AI workflows from personal data
-- Poker → CRO → the product-dev merge
 - Fuji photography and capturing moments of transition
 
 ## Links
