@@ -1,0 +1,16 @@
+{
+  "name": "tomfuertes-blog",
+  "private": true,
+  "scripts": {
+    "build": "bun run build.ts",
+    "dev": "bun run build.ts && bunx serve _site",
+    "preview": "bun run build && bunx wrangler dev",
+    "deploy": "bun run build && bunx wrangler deploy"
+  },
+  "dependencies": {
+    "marked": "^17.0.1"
+  },
+  "devDependencies": {
+    "wrangler": "^3"
+  }
+}
