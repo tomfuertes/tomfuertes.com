@@ -7,7 +7,10 @@
       "Bash(bun run dev)",
       "Bash(bun run serve)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git push)",
+      "Bash(npx playwright screenshot:*)",
+      "WebFetch(domain:notambourine.com)"
     ]
   },
   "outputStyle": "Explanatory",
