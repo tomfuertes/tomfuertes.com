@@ -1,5 +1,39 @@
 /*****************************************************************************/
 /*
+/* CSS Custom Properties - E-Reader Dark Theme
+/*
+/*****************************************************************************/
+
+:root {
+  /* Backgrounds - cool blue-gray */
+  --bg-primary: #0d1117;      /* Deep midnight */
+  --bg-secondary: #161b22;    /* Slightly lifted for cards/code */
+  --bg-code: #1c2128;         /* Code blocks */
+
+  /* Text - cool light grays */
+  --text-primary: #e6edf3;    /* Main text - bright but not white */
+  --text-secondary: #8b949e;  /* Meta, dates, muted */
+  --text-tertiary: #6e7681;   /* Very muted */
+
+  /* Links - blue accent */
+  --link: #58a6ff;            /* Bright blue */
+  --link-hover: #79c0ff;      /* Lighter on hover */
+  --link-visited: #a5d6ff;    /* Softer visited */
+
+  /* Accent */
+  --accent: #388bfd;          /* Title, emphasis */
+  --accent-hover: #58a6ff;
+
+  /* Borders */
+  --border: #30363d;          /* Subtle separation */
+
+  /* Typography */
+  --font-body: Charter, 'Bitstream Charter', 'Sitka Text', Cambria, serif;
+  --font-mono: Monaco, 'Courier New', monospace;
+}
+
+/*****************************************************************************/
+/*
 /* Common
 /*
 /*****************************************************************************/
@@ -13,21 +47,25 @@
 html, body { height: 100%; }
 
 body {
-  background-color: #FFF;
-  font: 13.34px Helvetica, Arial, sans-serif;
-  font-size: small;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 18px;
   text-align: center;
+  line-height: 1.6;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-size: 100%; }
+/* Typography hierarchy */
+h1 { font-size: 1.5em; margin-bottom: 0.5em; }
+h2 { font-size: 1.25em; margin: 1.5em 0 0.5em; }
+h3 { font-size: 1.1em; margin: 1.25em 0 0.5em; }
+h4, h5, h6 { font-size: 1em; }
 
-h1 { margin-bottom: 1em; }
 p { margin: 1em 0; }
 
-a         { color: #00a; }
-a:hover   { color: #000; }
-a:visited { color: #a0a; }
+a         { color: var(--link); }
+a:hover   { color: var(--link-hover); }
+a:visited { color: var(--link-visited); }
 
 /*****************************************************************************/
 /*
@@ -40,13 +78,17 @@ a:visited { color: #a0a; }
 }
 
 .posts li {
-  line-height: 1.75em;
+  display: flex;
+  gap: 1em;
+  align-items: baseline;
+  margin-bottom: 0.75em;
 }
 
-.posts span {
-  color: #aaa;
-  font-family: Monaco, "Courier New", monospace;
-  font-size: 80%;
+.posts .date {
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  flex-shrink: 0;
 }
 
 /*****************************************************************************/
@@ -56,69 +98,54 @@ a:visited { color: #a0a; }
 /*****************************************************************************/
 
 .site {
-  font-size: 115%;
-  text-align: justify;
-  width: 42em;
+  font-size: 100%;
+  text-align: left;
+  width: 38em;
+  max-width: 90vw;
   margin: 3em auto 2em;
-  line-height: 1.5em;
+  line-height: 1.6;
 }
 
-.header a {
-  font-weight: bold;
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 3em;
+  padding-bottom: 1em;
+  border-bottom: 1px solid var(--border);
+}
+
+.site-title {
+  font-size: 1.25em;
+  font-weight: 600;
+  color: var(--accent);
   text-decoration: none;
 }
 
-.title {
-  display: inline-block;
-  margin-bottom: 2em;
+.site-title:hover {
+  color: var(--accent-hover);
 }
 
-.title a {
-  color: #a00;
+.header nav a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  margin-left: 1.5em;
 }
 
-.title a:hover {
-  color: #000;
-}
-
-.header a.extra {
-  color: #aaa;
-  margin-left: 1em;
-}
-
-.header a.extra:hover {
-  color: #000;
+.header nav a:hover {
+  color: var(--text-primary);
 }
 
 .meta {
-  color: #aaa;
+  color: var(--text-secondary);
 }
 
 .footer {
-  font-size: 80%;
-  color: #666;
-  border-top: 4px solid #eee;
-  margin-top: 2em;
-  overflow: hidden;
-}
-
-.footer .contact {
-  float: left;
-  margin-right: 3em;
-}
-
-.footer .contact a {
-  color: #8085C1;
-}
-
-.footer .rss {
-  margin-top: 1.1em;
-  margin-right: -.2em;
-  float: right;
-}
-
-.footer .rss img {
-  border: 0;
+  margin-top: 4em;
+  padding-top: 1em;
+  border-top: 1px solid var(--border);
+  color: var(--text-tertiary);
+  font-size: 0.85em;
 }
 
 /*****************************************************************************/
@@ -129,9 +156,11 @@ a:visited { color: #a0a; }
 
 /* standard */
 .post pre {
-  border: 1px solid #ddd;
-  background-color: #eef;
-  padding: 0 .4em;
+  background-color: var(--bg-code);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1em;
+  overflow-x: auto;
 }
 
 .post ul, .post ol {
@@ -139,26 +168,41 @@ a:visited { color: #a0a; }
 }
 
 .post code {
-  border: 1px solid #ddd;
-  background-color: #eef;
-  padding: 0 .2em;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.1em 0.3em;
+  font-family: var(--font-mono);
+  font-size: 0.9em;
 }
 
 .post pre code {
   border: none;
+  padding: 0;
+  background: transparent;
 }
 
 .post img {
   max-width: 100%;
+  border-radius: 4px;
 }
 
 /* terminal */
 .post pre.terminal {
-  border: 1px solid #000;
-  background-color: #333;
-  color: #FFF;
+  border: 1px solid var(--border);
+  background-color: var(--bg-code);
+  color: var(--text-primary);
 }
 
 .post pre.terminal code {
-  background-color: #333;
+  background-color: transparent;
+}
+
+/* blockquotes */
+.post blockquote {
+  border-left: 3px solid var(--border);
+  padding-left: 1em;
+  margin: 1em 0;
+  color: var(--text-secondary);
+  font-style: italic;
 }

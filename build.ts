@@ -40,44 +40,23 @@ const defaultLayout = (title: string, content: string) => `<!DOCTYPE html>
     <body>
         <div class="site">
           <div class="header">
-            <h1 class="title"><a href="/">${SITE_NAME}</a></h1>
-            <a class="extra" href="/">home</a>
+            <a class="site-title" href="/">${SITE_NAME}</a>
+            <nav>
+              <a href="/">posts</a>
+              <a href="/about.html">about</a>
+            </nav>
           </div>
           ${content}
-          <div class="footer">
-            <div class="contact">
-              <p>
-                Tom Fuertes<br />
-                <strike>Poker Player</strike> Front End Developer<br />
-                <span id="em"></span><script>(function(){var a=atob('dG9tZnVlcnRlc0BnbWFpbC5jb20='),b=atob('dG9tQHRvbWZ1ZXJ0ZXMuY29t'),c=atob('dG9tQG5vdGFtYm91cmluZS5jb20=');document.getElementById('em').innerHTML=[a,b,c].join('<br>')})()</script>
-              </p>
-            </div>
-            <div class="contact">
-              <p>
-                <a href="https://github.com/tomfuertes">github.com/tomfuertes</a><br />
-                <a href="https://linkedin.com/in/tomfuertes">linkedin.com/in/tomfuertes</a><br />
-                <a href="https://twitter.com/thisbetom">twitter.com/thisbetom</a><br />
-              </p>
-            </div>
-            <div class="contact" style="flex-basis:100%;margin-top:1em;">
-              <p><strong>Want to talk? Ask me about:</strong><br />
-                My desk setup (the mic especially)<br />
-                Airgapping AI workflows from personal data<br />
-                Poker → CRO → the product-dev merge<br />
-                Fuji photography and capturing moments of transition
-              </p>
-              <p>
-                <strong>Looking to partner?</strong> I consult at <a href="https://notambourine.com">notambourine.com</a> — connect on <a href="https://linkedin.com/in/tomfuertes">LinkedIn</a>.
-              </p>
-            </div>
-          </div>
+          <footer class="footer">
+            <p>© ${new Date().getFullYear()}</p>
+          </footer>
         </div>
     </body>
 </html>`;
 
 // Post layout
 const postLayout = (title: string, date: string, content: string) => `
-<h2>${title}</h2>
+<h1>${title}</h1>
 <p class="meta">${dateToString(date)}</p>
 <div class="post">
 ${content}
@@ -138,12 +117,26 @@ const indexContent = `
 <div id="home">
   <h1>Blog Posts</h1>
   <ul class="posts">
-    ${posts.map(p => `<li><span>${dateToString(p.date)}</span> &raquo; <a href="${p.url}">${p.title}</a></li>`).join("\n    ")}
+    ${posts.map(p => `<li><span class="date">${dateToString(p.date)}</span><a href="${p.url}">${p.title}</a></li>`).join("\n    ")}
   </ul>
 </div>`;
 
 await Bun.write(`${OUT_DIR}/index.html`, defaultLayout("Blog", indexContent));
 console.log("  /index.html");
+
+// Generate about page
+const aboutFile = await Bun.file("_pages/about.md").text();
+const { content: aboutContent } = parseFrontmatter(aboutFile);
+const aboutHtml = await marked(aboutContent);
+const aboutPageContent = `
+<div class="page">
+  <h1>About</h1>
+  <div class="post">
+${aboutHtml}
+  </div>
+</div>`;
+await Bun.write(`${OUT_DIR}/about.html`, defaultLayout("About", aboutPageContent));
+console.log("  /about.html");
 
 // Copy static assets
 await Bun.$`cp -r css images ${OUT_DIR}/`;
