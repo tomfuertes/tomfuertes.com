@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:developers.cloudflare.com)",
+      "Bash(bun run build)"
+    ]
+  },
+  "outputStyle": "Explanatory",
+  "spinnerTipsEnabled": true
+}
