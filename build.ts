@@ -34,6 +34,8 @@ const defaultLayout = (title: string, content: string) => `<!DOCTYPE html>
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <title>${title}</title>
         <meta name="viewport" content="width=device-width">
+        <link rel="icon" type="image/png" href="/images/favicon-32.png" sizes="32x32">
+        <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
         <link rel="stylesheet" href="/css/syntax.css">
         <link rel="stylesheet" href="/css/main.css">
     </head>
