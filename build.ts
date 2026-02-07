@@ -3,6 +3,7 @@ import { Glob } from "bun";
 
 const SITE_NAME = "Tom Fuertes";
 const OUT_DIR = "_site";
+const GIT_SHA = (await Bun.$`git rev-parse --short HEAD`.text()).trim();
 
 // Parse frontmatter from markdown
 function parseFrontmatter(content: string) {
@@ -28,6 +29,7 @@ function dateToString(dateStr: string) {
 
 // Default layout template
 const defaultLayout = (title: string, content: string) => `<!DOCTYPE html>
+<!-- build: ${GIT_SHA} -->
 <html>
     <head>
         <meta charset="utf-8">
