@@ -156,3 +156,22 @@ console.log("  /css/");
 console.log("  /images/");
 
 console.log(`\nBuilt ${posts.length} posts to ${OUT_DIR}/`);
+
+// Watch mode: rebuild on source file changes
+if (process.argv.includes("--watch")) {
+  const { watch } = await import("fs");
+  const dirs = ["_posts", "_pages", "css"];
+  let timeout: Timer | null = null;
+  const rebuild = () => {
+    if (timeout) clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      console.log("\nRebuilding...");
+      Bun.spawn(["bun", "run", "build.ts"], { stdio: ["inherit", "inherit", "inherit"] });
+    }, 100);
+  };
+  for (const dir of dirs) {
+    watch(dir, { recursive: true }, rebuild);
+  }
+  console.log("Watching _posts/, _pages/, css/ for changes...");
+  await new Promise(() => {}); // keep alive
+}

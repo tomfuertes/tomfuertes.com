@@ -1,3 +1,5 @@
 _site
 node_modules
-*local*
+
+# Local overrides (e.g., settings.local.json for machine-specific config)
+*.local.*
