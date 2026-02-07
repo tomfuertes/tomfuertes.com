@@ -32,7 +32,7 @@ const defaultLayout = (title: string, content: string) => `<!DOCTYPE html>
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>${title}</title>
+        <title>${title} | tomfuertes.com</title>
         <meta name="viewport" content="width=device-width">
         <link rel="icon" type="image/png" href="/images/favicon-32.png" sizes="32x32">
         <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
@@ -129,7 +129,7 @@ for (const post of posts) {
 // Generate index
 const indexContent = `
 <div id="home">
-  <h1>Blog Posts</h1>
+  <h1>Posts</h1>
   <ul class="posts">
     ${posts.map(p => `<li><span class="date">${dateToString(p.date)}</span><a href="${p.url}">${p.title}</a></li>`).join("\n    ")}
   </ul>
