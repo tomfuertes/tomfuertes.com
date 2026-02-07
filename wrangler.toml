@@ -1,4 +1,4 @@
-name = "tomfuertes-blog"
+name = "tomfuertes-com"
 main = "worker.ts"
 compatibility_date = "2025-01-01"
 
