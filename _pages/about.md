@@ -4,7 +4,7 @@ title: About
 
 Fractional CTO. UIGEA fallout → winding path here.
 
-I run [NoTambourine](https://notambourine.com) — cultural change, unblocking orgs, shipping it. I've landed code to prod at Uber, DoorDash, Casper, Patagonia, Adidas, Ring, Zendesk, and others.
+I run [NoTambourine](https://notambourine.com) - cultural change, unblocking orgs, shipping it. I've landed code to prod at Uber, DoorDash, Casper, Patagonia, Adidas, Ring, Zendesk, and others.
 
 Before that: conversion rate optimization, A/B testing infrastructure, and the messy middle where product meets engineering.
 
