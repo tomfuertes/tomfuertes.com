@@ -154,6 +154,7 @@ console.log("  /about.html");
 
 // Copy static assets
 await Bun.$`cp -r css images ${OUT_DIR}/`;
+await Bun.$`cp images/favicon-32.png ${OUT_DIR}/favicon.ico`;
 console.log("  /css/");
 console.log("  /images/");
 
