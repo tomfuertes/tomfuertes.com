@@ -162,8 +162,10 @@ await Bun.$`cp images/favicon-32.png ${BUILD_DIR}/favicon.ico`;
 console.log("  /css/");
 console.log("  /images/");
 
-// Sync build into _site/ (preserves directory so wrangler's handle stays valid, cleans stale files)
-await Bun.$`mkdir -p ${OUT_DIR} && rsync -a --delete ${BUILD_DIR}/ ${OUT_DIR}/ && rm -rf ${BUILD_DIR}`;
+// Swap build into _site/ (cleans stale files without requiring rsync)
+const { rm, rename } = await import("fs/promises");
+await rm(OUT_DIR, { recursive: true, force: true });
+await rename(BUILD_DIR, OUT_DIR);
 
 console.log(`\nBuilt ${posts.length} posts to ${OUT_DIR}/`);
 
