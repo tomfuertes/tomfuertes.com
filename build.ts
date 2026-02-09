@@ -1,5 +1,7 @@
 import { marked } from "marked";
 import { Glob } from "bun";
+import { mkdir, rm, rename, cp } from "node:fs/promises";
+import { watch } from "node:fs";
 
 const SITE_NAME = "Tom Fuertes";
 const OUT_DIR = "_site";
@@ -86,52 +88,53 @@ interface Post {
   html: string;
 }
 
-const posts: Post[] = [];
+async function build() {
+  const posts: Post[] = [];
 
-// Process posts
-const glob = new Glob("_posts/*.md");
-for await (const path of glob.scan(".")) {
-  const file = await Bun.file(path).text();
-  const { data, content } = parseFrontmatter(file);
+  // Process posts
+  const glob = new Glob("_posts/*.md");
+  for await (const path of glob.scan(".")) {
+    const file = await Bun.file(path).text();
+    const { data, content } = parseFrontmatter(file);
 
-  // Extract date and slug from filename: 2014-01-15-auto-build-tags.md
-  const filename = path.split("/").pop()!;
-  const match = filename.match(/^(\d{4})-(\d{2})-(\d{2})-(.+)\.md$/);
-  if (!match) continue;
+    // Extract date and slug from filename: 2014-01-15-auto-build-tags.md
+    const filename = path.split("/").pop()!;
+    const match = filename.match(/^(\d{4})-(\d{2})-(\d{2})-(.+)\.md$/);
+    if (!match) continue;
 
-  const [, year, month, day, slug] = match;
-  const url = `/${year}/${month}/${day}/${slug}.html`;
-  const html = await marked(content);
+    const [, year, month, day, slug] = match;
+    const url = `/${year}/${month}/${day}/${slug}.html`;
+    const html = await marked(content);
 
-  posts.push({
-    title: data.title || slug,
-    date: data.date || `${year}-${month}-${day}`,
-    url,
-    html,
-  });
-}
+    posts.push({
+      title: data.title || slug,
+      date: data.date || `${year}-${month}-${day}`,
+      url,
+      html,
+    });
+  }
 
-// Sort posts by date (newest first)
-posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  // Sort posts by date (newest first)
+  posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-// Build into temp dir, then rsync into _site/ so the dev server never sees a missing directory
-const TMP_DIR = `${OUT_DIR}.tmp`;
-await Bun.$`rm -rf ${TMP_DIR} && mkdir -p ${TMP_DIR}`;
-const BUILD_DIR = TMP_DIR;
+  // Build into temp dir, then swap into _site/ so the dev server never sees a partial build
+  const TMP_DIR = `${OUT_DIR}.tmp`;
+  await rm(TMP_DIR, { recursive: true, force: true });
+  await mkdir(TMP_DIR, { recursive: true });
 
-// Write posts
-for (const post of posts) {
-  const postHtml = postLayout(post.title, post.date, post.html);
-  const fullHtml = defaultLayout(post.title, postHtml);
+  // Write posts
+  for (const post of posts) {
+    const postHtml = postLayout(post.title, post.date, post.html);
+    const fullHtml = defaultLayout(post.title, postHtml);
 
-  const outPath = `${BUILD_DIR}${post.url}`;
-  await Bun.$`mkdir -p ${outPath.split("/").slice(0, -1).join("/")}`;
-  await Bun.write(outPath, fullHtml);
-  console.log(`  ${post.url}`);
-}
+    const outPath = `${TMP_DIR}${post.url}`;
+    await mkdir(outPath.split("/").slice(0, -1).join("/"), { recursive: true });
+    await Bun.write(outPath, fullHtml);
+    console.log(`  ${post.url}`);
+  }
 
-// Generate index
-const indexContent = `
+  // Generate index
+  const indexContent = `
 <div id="home">
   <h1>Posts</h1>
   <ul class="posts">
@@ -139,46 +142,57 @@ const indexContent = `
   </ul>
 </div>`;
 
-await Bun.write(`${BUILD_DIR}/index.html`, defaultLayout("Blog", indexContent));
-console.log("  /index.html");
+  await Bun.write(`${TMP_DIR}/index.html`, defaultLayout("Blog", indexContent));
+  console.log("  /index.html");
 
-// Generate about page
-const aboutFile = await Bun.file("_pages/about.md").text();
-const { content: aboutContent } = parseFrontmatter(aboutFile);
-const aboutHtml = await marked(aboutContent);
-const aboutPageContent = `
+  // Generate about page
+  const aboutFile = await Bun.file("_pages/about.md").text();
+  const { content: aboutContent } = parseFrontmatter(aboutFile);
+  const aboutHtml = await marked(aboutContent);
+  const aboutPageContent = `
 <div class="page">
   <h1>About</h1>
   <div class="post">
 ${aboutHtml}
   </div>
 </div>`;
-await Bun.write(`${BUILD_DIR}/about.html`, defaultLayout("About", aboutPageContent));
-console.log("  /about.html");
+  await Bun.write(`${TMP_DIR}/about.html`, defaultLayout("About", aboutPageContent));
+  console.log("  /about.html");
 
-// Copy static assets
-await Bun.$`cp -r css images ${BUILD_DIR}/`;
-await Bun.$`cp images/favicon-32.png ${BUILD_DIR}/favicon.ico`;
-console.log("  /css/");
-console.log("  /images/");
+  // Copy static assets
+  await cp("css", `${TMP_DIR}/css`, { recursive: true });
+  await cp("images", `${TMP_DIR}/images`, { recursive: true });
+  await Bun.write(`${TMP_DIR}/favicon.ico`, Bun.file("images/favicon-32.png"));
+  console.log("  /css/");
+  console.log("  /images/");
 
-// Swap build into _site/ (cleans stale files without requiring rsync)
-const { rm, rename } = await import("fs/promises");
-await rm(OUT_DIR, { recursive: true, force: true });
-await rename(BUILD_DIR, OUT_DIR);
+  // Swap build into _site/ (rm + rename so dev server never serves a half-built directory)
+  await rm(OUT_DIR, { recursive: true, force: true });
+  await rename(TMP_DIR, OUT_DIR);
 
-console.log(`\nBuilt ${posts.length} posts to ${OUT_DIR}/`);
+  console.log(`\nBuilt ${posts.length} posts to ${OUT_DIR}/`);
+}
+
+await build();
 
 // Watch mode: rebuild on source file changes
 if (process.argv.includes("--watch")) {
-  const { watch } = await import("fs");
   const dirs = ["_posts", "_pages", "css"];
   let timeout: Timer | null = null;
+  let building = false;
   const rebuild = () => {
     if (timeout) clearTimeout(timeout);
-    timeout = setTimeout(() => {
+    timeout = setTimeout(async () => {
+      if (building) return;
+      building = true;
       console.log("\nRebuilding...");
-      Bun.spawn(["bun", "run", "build.ts"], { stdio: ["inherit", "inherit", "inherit"] });
+      try {
+        await build();
+      } catch (error) {
+        console.error("Build failed:", error);
+      } finally {
+        building = false;
+      }
     }, 100);
   };
   for (const dir of dirs) {
