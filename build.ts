@@ -114,15 +114,17 @@ for await (const path of glob.scan(".")) {
 // Sort posts by date (newest first)
 posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-// Clean and create output directory
-await Bun.$`rm -rf ${OUT_DIR} && mkdir -p ${OUT_DIR}`;
+// Build into temp dir, then rsync into _site/ so the dev server never sees a missing directory
+const TMP_DIR = `${OUT_DIR}.tmp`;
+await Bun.$`rm -rf ${TMP_DIR} && mkdir -p ${TMP_DIR}`;
+const BUILD_DIR = TMP_DIR;
 
 // Write posts
 for (const post of posts) {
   const postHtml = postLayout(post.title, post.date, post.html);
   const fullHtml = defaultLayout(post.title, postHtml);
 
-  const outPath = `${OUT_DIR}${post.url}`;
+  const outPath = `${BUILD_DIR}${post.url}`;
   await Bun.$`mkdir -p ${outPath.split("/").slice(0, -1).join("/")}`;
   await Bun.write(outPath, fullHtml);
   console.log(`  ${post.url}`);
@@ -137,7 +139,7 @@ const indexContent = `
   </ul>
 </div>`;
 
-await Bun.write(`${OUT_DIR}/index.html`, defaultLayout("Blog", indexContent));
+await Bun.write(`${BUILD_DIR}/index.html`, defaultLayout("Blog", indexContent));
 console.log("  /index.html");
 
 // Generate about page
@@ -151,14 +153,17 @@ const aboutPageContent = `
 ${aboutHtml}
   </div>
 </div>`;
-await Bun.write(`${OUT_DIR}/about.html`, defaultLayout("About", aboutPageContent));
+await Bun.write(`${BUILD_DIR}/about.html`, defaultLayout("About", aboutPageContent));
 console.log("  /about.html");
 
 // Copy static assets
-await Bun.$`cp -r css images ${OUT_DIR}/`;
-await Bun.$`cp images/favicon-32.png ${OUT_DIR}/favicon.ico`;
+await Bun.$`cp -r css images ${BUILD_DIR}/`;
+await Bun.$`cp images/favicon-32.png ${BUILD_DIR}/favicon.ico`;
 console.log("  /css/");
 console.log("  /images/");
+
+// Sync build into _site/ (preserves directory so wrangler's handle stays valid, cleans stale files)
+await Bun.$`mkdir -p ${OUT_DIR} && rsync -a --delete ${BUILD_DIR}/ ${OUT_DIR}/ && rm -rf ${BUILD_DIR}`;
 
 console.log(`\nBuilt ${posts.length} posts to ${OUT_DIR}/`);
 
