@@ -2,17 +2,17 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Build & Deploy
+## Build & Dev
 
-- `bun run dev` - watch + rebuild + serve at localhost:8787
+- `bun run dev` - build + watch + serve at localhost:3000
 - `bun run build` - build to _site/
-- `bun run deploy` - build + deploy to Cloudflare Workers
+- Deploy is handled by git push (CI/Cloudflare)
 
 ## Architecture
 
-Single-file static site generator (`build.ts`) that compiles markdown to HTML and deploys via Cloudflare Workers.
+Single-file static site generator (`build.ts`) that compiles markdown to HTML. Deployed via Cloudflare Workers.
 
-- `build.ts` - the entire build pipeline: frontmatter parsing, markdown rendering (via marked), HTML templating, index generation, about page, and `--watch` mode with fs.watch
+- `build.ts` - the entire pipeline: frontmatter parsing, markdown rendering (via marked), HTML templating, index/about generation, and `--watch` mode with built-in Bun.serve() dev server
 - `worker.ts` - Cloudflare Worker that serves `_site/` via the ASSETS binding
 - `wrangler.toml` - Worker config (name: `tomfuertes-com`)
 

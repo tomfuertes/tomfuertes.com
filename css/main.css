@@ -100,7 +100,7 @@ a:visited { color: var(--link-visited); }
 .site {
   font-size: 100%;
   text-align: left;
-  width: 38em;
+  width: 32em;
   max-width: 90vw;
   margin: 3em auto 2em;
   line-height: 1.6;
