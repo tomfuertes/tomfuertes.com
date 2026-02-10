@@ -199,5 +199,19 @@ if (process.argv.includes("--watch")) {
     watch(dir, { recursive: true }, rebuild);
   }
   console.log("Watching _posts/, _pages/, css/ for changes...");
-  await new Promise(() => {}); // keep alive
+
+  Bun.serve({
+    port: 3000,
+    async fetch(req) {
+      let path = new URL(req.url).pathname;
+      if (path === "/") path = "/index.html";
+      // Try _site/ first, fall back to _site.tmp/ during rebuilds (rm/rename gap)
+      for (const dir of [OUT_DIR, `${OUT_DIR}.tmp`]) {
+        const file = Bun.file(`${dir}${path}`);
+        if (await file.exists()) return new Response(file);
+      }
+      return new Response("Not found", { status: 404 });
+    },
+  });
+  console.log("Serving at http://localhost:3000");
 }
